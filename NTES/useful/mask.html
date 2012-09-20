@@ -1,0 +1,81 @@
+<!doctype html>
+<html>
+<head>
+	<title>CSS 实现遮盖层</title>
+	<meta charset="gb2312" />
+	<style>
+	/* the style for layer or mask */
+	body{_height:100%;}
+	#mask, #layer{
+		display: none;
+		position:fixed;
+		_position:absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		z-index: 44;
+	}
+	#mask{
+		z-index: 33;
+		background-color: #101010;
+		filter: Alpha(opacity=40);
+		opacity: .4;
+	}
+	#layer .bd{
+		position: relative;
+		top: 50%;
+		width: 200px;
+		/* 自己设定了高度 */
+		/*
+		margin: -100px auto 0 auto;
+		height: 200px; 
+		*//* 这个是设定值，与上面的-100px相呼应的 */
+		/* 通过js去做处理的方式 */
+		margin-left: auto;
+		margin-right: auto;
+		/**/
+		background-color: #fff;
+	}
+	/* page show */
+	#page{width:960px;margin:0 auto;height:1000px;text-align:center;background-color:#c00;}
+	</style>
+</head>
+<body>
+<div id="page">)))))))))))))CSS 实现遮盖层测试(((((((((((((((</div>
+<div id="mask"></div>
+<div id="layer">
+	<div class="bd">
+		<p>看看是否是垂直居中了？？？？？</p>
+		<p>sssssssssssssss
+		<p>ssssssssssssss
+		<p>ssssssssssss
+		<p>ssssssssss
+		<p>ssssssss
+		<p>ssssss
+		<p>sssss
+		<p>sss
+		<p>ss
+		<p>s
+	</div>
+</div>
+<script>
+	(function(mask){
+		var layer = document.getElementById('layer');
+		// for IE 6
+		if(document.uniqueID && !window.XMLHttpRequest){
+			document.getElementsByTagName('html')[0].style.overflow = 'hidden';
+		}
+		mask.style.display = 'block';
+		layer.style.display = 'block';
+		/* js 获取高度 */
+		var bd = layer.firstChild, h;
+		if(bd.nodeType==3)bd = bd.nextSibling;
+		h = bd.clientHeight;
+		bd.style.height = h + 'px';
+		bd.style.marginTop = -h/2 + 'px';
+		/**/
+	})(document.getElementById('mask'));
+</script>
+</body>
+</html>
