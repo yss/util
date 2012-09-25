@@ -2,6 +2,7 @@
  * 基于jQuery的随机位置展现，我写这个的最初目的是让它展现一首诗歌，所以命名为writePoetry，希望你也能喜欢。
  * @Author yss.nelson@gmail.com | https://github.com/yss
  * @Date 2012/09/16
+ * @example http://yansong.me
  * @Update
  */
 ;(function($, undefined) {
@@ -11,13 +12,13 @@
  * $.writePoetry('#write-poetry');
  * 如果你把#write-poetry内的节点加上图片，会有不一样的效果哦~
  * @param {jQuery|Selector} elem
- * @param {Object} options 具体配置请移步下方的defaultConfig
+ * @param {Object} options 具体配置请移步下方的defaultOptions
  */
 function WritePoetry(elem, options) {
     if (!(this instanceof WritePoetry)) return new WritePoetry(elem, options);
     elem = $(elem);
     if (!elem.length) return;
-    var defaultConfig = {
+    var defaultOptions = {
             // ignoreClass: '.ignore', // 忽略所有classname里包含ignore的节点
             isLoop: true, // 是否循环显示
             scopeValue: 64, // 范围长度
@@ -27,15 +28,15 @@ function WritePoetry(elem, options) {
             easing: 'swing' // 动画函数
         };
     
-    options = $.extend(options, defaultConfig);
-    options._width = parseInt(elem.outerWidth()/2, 10);
-    options._height = parseInt(elem.outerHeight()/2, 10);
-    options.elems = elem.children();
-    if (options.ignoreClass) {
-        options.elems = options.elems.not(options.ignoreClass);
+    $.extend(defaultOptions, options);
+    defaultOptions._width = parseInt(elem.outerWidth()/2, 10);
+    defaultOptions._height = parseInt(elem.outerHeight()/2, 10);
+    defaultOptions.elems = elem.children();
+    if (defaultOptions.ignoreClass) {
+        defaultOptions.elems = defaultOptions.elems.not(defaultOptions.ignoreClass);
     }
     elem.css('position', 'relative');
-    this.config = options;
+    this.config = defaultOptions;
     this.elem = elem;
     this.init();
 }

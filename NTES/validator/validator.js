@@ -267,4 +267,4 @@ if(YS === undefined)var YS = {};
 			tmp.getAttribute('data-type') === 'needValidate'&&Validator(tmp);
 		}
 	}, 1000);
-})(YS)
+})(YS);
