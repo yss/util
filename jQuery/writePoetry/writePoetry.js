@@ -106,6 +106,7 @@ $.extend(WritePoetry.prototype, {
         if (elems.length) {
             this.initData(elems);
             elems.appendTo(this.elem);
+            this.config.elems = this.config.elems.add(elems);
         }
     },
     /**
@@ -124,14 +125,14 @@ $.extend(WritePoetry.prototype, {
     },
     /**
      * 数据定位，用于第一次加入数据，随机排列数据
-     * @param 
+     * @param {jQuery} elems
      * @return
      */
     _position: function(elems) {
         var _this = this,
             config = _this.config;
 
-        $(elems).each(function() {
+        elems.each(function() {
             var elem = $(this),
                 width = elem.width(),
                 height = elem.height(),

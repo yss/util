@@ -1,0 +1,27 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>formchecker测试集</title>
+</head>
+<body>
+<form name="publishForm" method="get">
+    <input type="text" name="title" />
+    <input type="submit" value="gooo" />
+</form>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+<script src="formchecker.js"></script>
+<script>
+new $.formChecker(document.forms.publishForm, {
+    fields: {
+        title: {
+            validateFn: function(val) {
+                return val.length > 4;
+            },
+            errorMsg: '长度不小于'
+        }
+    }
+});
+</script>
+</body>
+</html>

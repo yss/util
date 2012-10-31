@@ -41,6 +41,10 @@ function log(a){
 }
 */
 (function(win){
+    var toString = Object.prototype.toString,
+        isObject = function(val) {
+            toString.call(val) === '[object object]'
+        };
     win.YS = win.YS || {};
 	/**
 	 * 对象复制和替换 MIN version 如果对应的s里的值为0, null, undefined也会覆盖
@@ -57,8 +61,8 @@ function log(a){
 		for(a in o){
 			t1 = s[a];
 			t2 = o[a];
-			if(typeof t2 == 'object'){
-				typeof t1 == 'object' ? mix(t1, t2, w, pro) : s[a] = t2;
+            if(typeof t2 === 'object'){
+				typeof t1 === 'object' ? mix(t1, t2, w, pro) : s[a] = t2;
 			}
 			// 是否覆盖, 原型是否存在a值，或者原型里对应的值为空
 			if(w||!s.hasOwnProperty(a)||!t1)s[a] = t2;

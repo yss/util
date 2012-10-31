@@ -1,6 +1,6 @@
 /**
  * 很基本的表单验证
- * 错误是以弹出层的方式输出
+ * 错误是以弹出层的方式输出，需要特定的CSS支持
  *
  */
 
@@ -11,9 +11,9 @@ function FormChecker(form, options) {
     if (!form.length || !form.is('form')) return;
     var defaultOptions = {
         // 错误提示class
-        errorClass: '.form-error-input',
+        errorClass: 'form-error-input',
         // 提示错误盒子
-        errorBoxClass: '.form-error-box',
+        errorBoxId: 'form-error-box',
         // 
         showBoxTime: 3000,
         // 表单项配置
@@ -41,35 +41,34 @@ function FormChecker(form, options) {
 
 $.extend(FormChecker.prototype, {
     // 检测文件是否通过
-    _check: function(field, key, value) {
+    _check: function(field, value) {
         if (field.validateReg) {
-            return field.validateReg.test(key);
+            return field.validateReg.test(value);
         } else if (field.validateFn) {
-            return field.validateFn(elem.val());
+            return field.validateFn(value);
         } else {
-            return !/^\s*$/.test(elem.val());
+            return !/^\s*$/.test(value);
         }
     },
 
     doSubmit: function() {
         var _this = this,
             config = this.config,
-            field = config.field;
+            fields = config.fields;
         config.form.submit(function() {
-            var form = this.get(0),
-                errMsg = [],
+            var errMsg = [],
                 key,
                 item,
                 input;
-            for(key in field) {
-                item = field[key];
+            for(key in fields) {
+                item = fields[key];
                 key = item.name || key;
-                input = $(form[key]);
-                if (_this._check(item, key, input.val())) {
+                input = $(this[key]);
+                if (_this._check(item, input.val())) {
+                    input.removeClass(config.errorClass);
+                } else {
                     errMsg.push(item.errorMsg);
                     input.addClass(config.errorClass);
-                } else {
-                    input.removeClass(config.errorClass);
                 }
             }
             if (errMsg.length) {
@@ -77,16 +76,16 @@ $.extend(FormChecker.prototype, {
                 return false;
             }
         }).on('click', 'input', function() {
-            this.removeClass(config.errorClass);
+            $(this).removeClass(config.errorClass);
         });
     },
 
     showErrMsg: function(errMsg) {
-        var boxClass = this.config.errorBoxClass,
+        var boxId = this.config.errorBoxId,
             showTime = this.config.showBoxTime,
-            errorBox = $(boxClass);
-        if (!errorBox) {
-            errorBox = $('<div class="' + boxClass + '"></div>').prependTo('body');
+            errorBox = $('#' + boxId);
+        if (!errorBox.length) {
+            errorBox = $('<div id="' + boxId + '"></div>').prependTo('body');
         }
         errorBox.html('<ol><li>' + errMsg.join('</li><li>') + '</li></ol>');
         errorBox.fadeIn(function() {
@@ -97,4 +96,5 @@ $.extend(FormChecker.prototype, {
     }
 });
 
+$.formChecker = FormChecker;
 })(jQuery);
