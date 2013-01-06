@@ -1,0 +1,44 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>slide test</title>
+    <style>
+    ul,li { margin:0; padding:0; }
+    .slide{_display:inline;position:relative;margin:104px 30px 0 27px;}
+    .slide, .slide li{float:left;width:193px;height:344px;overflow:hidden;text-indent:-500px;}
+    .slide ul{position:absolute;width:1360px;background:url(http://img3.cache.netease.com/book/workspace/app/bg_slide.jpg) no-repeat 0 0;}
+    .slide .first{background:url(http://img3.cache.netease.com/book/workspace/app/bg_slide.jpg) no-repeat 0 0;}
+    #slide2 li { float:none; background:url(http://img3.cache.netease.com/book/workspace/app/bg_slide.jpg) no-repeat -386px 0;}
+    #slide2 li:nth-of-type(2n){ background:url(http://img3.cache.netease.com/book/workspace/app/bg_slide.jpg) no-repeat -193px 0; }
+    </style>
+</head>
+<body>
+    <div id="slide" class="slide">
+        <ul>
+            <li class="first"></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+    </div>
+    <div id="slide2" class="slide">
+        <ul>
+            <li class="first"></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+    </div>
+<script src="http://s0.meituan.net/vendor/js/zepto-1.0.min-min.v6465391c.js"></script>
+<script src="slider.js"></script>
+<script>
+var slide1 = $.slide({panel:'#slide ul', direction: 'left'})
+var slide2 = $.slide({panel:'#slide2 ul', direction: 'top'})
+</script>
+</body>
+</html>

@@ -636,8 +636,7 @@
 		
 		_run: function(){
 			var t = this,
-				times = t.times,
-				isEnd = times == t.account,
+				isEnd = t.times =< t.account,
 				cls = t.cls,
 				direction = t.direction,
 				tabs = t.tabs;
@@ -663,7 +662,7 @@
 			// 存在tab及class的情况
 			if(tabs&&cls){
 				$.style.removeCss(tabs[t.account++], cls);
-				if(times<t.account)t.account=0;
+				if(t.times<t.account)t.account=0;
 				$.style.addCss(tabs[t.account], cls);
 			}else{
 				if(isEnd)t.account=0;else t.account++;
