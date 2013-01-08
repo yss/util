@@ -4,13 +4,17 @@
     <meta charset="UTF-8">
     <title>slide test</title>
     <style>
-    ul,li { margin:0; padding:0; }
+    ul,li { margin:0; padding:0; list-style:none; }
     .slide{_display:inline;position:relative;margin:104px 30px 0 27px;}
-    .slide, .slide li{float:left;width:193px;height:344px;overflow:hidden;text-indent:-500px;}
-    .slide ul{position:absolute;width:1360px;background:url(http://img3.cache.netease.com/book/workspace/app/bg_slide.jpg) no-repeat 0 0;}
-    .slide .first{background:url(http://img3.cache.netease.com/book/workspace/app/bg_slide.jpg) no-repeat 0 0;}
-    #slide2 li { float:none; background:url(http://img3.cache.netease.com/book/workspace/app/bg_slide.jpg) no-repeat -386px 0;}
-    #slide2 li:nth-of-type(2n){ background:url(http://img3.cache.netease.com/book/workspace/app/bg_slide.jpg) no-repeat -193px 0; }
+    .slide, .slide  ul li{float:left;width:193px;height:344px;overflow:hidden;text-indent:-500px;}
+    .slide ul{position:absolute;width:1360px;background:url(bg_slide.jpg) no-repeat 0 0;}
+    .slide .first{background:url(bg_slide.jpg) no-repeat 0 0;}
+    #slide2 ul li { float:none; background:url(bg_slide.jpg) no-repeat -386px 0;}
+    #slide2 ul li:nth-of-type(2n){ background:url(http://img3.cache.netease.com/book/workspace/app/bg_slide.jpg) no-repeat -193px 0; }
+
+    .slide ol { position:absolute; bottom:0; right:0; }
+    .slide ol li { padding:5px; background:#ccc; text-indent:0; }
+    .slide .selected { background:#f00; }
     </style>
 </head>
 <body>
@@ -23,6 +27,14 @@
             <li></li>
             <li></li>
         </ul>
+        <ol>
+            <li>1</li>
+            <li>2</li>
+            <li>3</li>
+            <li>4</li>
+            <li>5</li>
+            <li>6</li>
+        </ol>
     </div>
     <div id="slide2" class="slide">
         <ul>
@@ -34,11 +46,19 @@
             <li></li>
         </ul>
     </div>
+    <p id="p"></p>
 <script src="http://s0.meituan.net/vendor/js/zepto-1.0.min-min.v6465391c.js"></script>
 <script src="slider.js"></script>
 <script>
-var slide1 = $.slide({panel:'#slide ul', direction: 'left'})
-var slide2 = $.slide({panel:'#slide2 ul', direction: 'top'})
+isTouch = false;
+if (~navigator.userAgent.indexOf('Mobile')) {
+    isTouch = true;
+    document.getElementById('p').innerHTML = 'true';
+} else {
+    document.getElementById('p').innerHTML = navigator.userAgent;
+}
+var slide1 = $.slide({panel:'#slide ul', tab: '#slide ol', direction: 'left', isTouch: isTouch})
+var slide2 = $.slide({panel:'#slide2 ul', direction: 'top', isTouch: isTouch})
 </script>
 </body>
 </html>

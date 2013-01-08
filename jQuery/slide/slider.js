@@ -9,16 +9,17 @@
 	 * 滚动卡盘，需要特定的html,css支持
 	 * @param {Object} o
 	 *		@attr {Selector|HTMLElement} panel 内容栏
-	 *		@attr {String}addPanelEvent 鼠标移动上去，卡盘停止 default: true
+	 *		@attr {String} addPanelEvent 鼠标移动上去，卡盘停止 default: true
 	 *		@attr {Selector|HTMLElement} tab 切换栏，可空
-	 *		@attr {String} tabEvent 鼠标切换事件 default: mouseover 当为'none'是不设置事件
+	 *		@attr {String} tabEvent 鼠标切换事件 default: mouseover | touchStart 当为'none'时不设置事件
+     *      @attr {Boolean} isTouch 是否是触摸 default: false
 	 *		@attr {String} cls 用于切换的class default: selected
 	 *		@attr {String} direction 轮播方向（上或左）top|left default: top
-	 *		@attr {String}easing 动画函数 default: ease
+	 *		@attr {String} easing 动画函数 default: ease
 	 *		@attr {Number} duration 动画所用时间 default: 0.5(s)
 	 *		@attr {Number} rollSize 每次轮播滚动子元素个数 default: 1
 	 *		@attr {Number} interval 轮播间隔时间 default: 3
-	 *		@attr {Boolean} autoplay 是否自动循环 default: true
+	 *		@attr {Boolean} isLoop 是否自动循环 default: true
 	 *		@attr {Number} startPos 开始位置 default: 0
 	 *		@attr {Function} callback 回调函数
 	 * @param callback
@@ -34,7 +35,7 @@
             duration: 0.5,
             rollSize: 1,
             interval: 3,
-            autoplay: true,
+            isLoop: true,
             startPos: 0,
             callback: function(){}
         };
@@ -95,6 +96,7 @@
             var _this = this,
                 config = this.config,
                 panel = config.panel,
+                direction = config.direction,
                 initValue = this.startValue - config.startPos * _this.rollLength + 'px',
                 i = 0;
             // 复制滚动项
@@ -103,16 +105,24 @@
             }
 
             // 设置初始化面板的位置
-            panel.css(config.direction, initValue);
-            _this.css[config.direction] = initValue;
+            panel.css(direction, initValue);
+            _this.css[direction] = initValue;
             // 设置面板的事件
             if (config.addPanelEvent) {
-                panel.mouseover(function() {
-                    _this.stop();
-                });
-                panel.mouseout(function() {
-                    _this.start();
-                });
+                if (config.isTouch) {
+                    var isTop = direction === 'top';
+                    panel[isTop? 'swipeUp' : 'swipeLeft'](function() {
+                        _this.next();
+                    })[isTop? 'swipeDown': 'swipeRight'](function() {
+                        _this.prev();
+                    });
+                } else {
+                    panel.mouseover(function() {
+                        _this.stop();
+                    }).mouseout(function() {
+                        _this.start();
+                    });
+                }
             }
         },
 		
@@ -121,17 +131,33 @@
          */
 		_addTabEvent: function(){
             var _this = this,
-                config = _this.config;
-            config.tabs.each(function(i, node) {
-                $(node)[config.tabEvent](function() {
-                    _this.stop();
-                    if (_this.count !== i) {
-                        _this._move(_this.count, i);
-                        _this.count = i;
-                    }
-                }).mouseout(function() {
-                    _this.start();
-                });
+                config = _this.config,
+                pause;
+            this.tabs.each(function(i, node) {
+                if (config.isTouch) {
+                    $(node).tap(function() {
+                        _this.stop();
+                        if (_this.count !== i) {
+                            _this._move(_this.count, i, function() {
+                                this.start();
+                            });
+                            _this.count = i;
+                        }
+                    });
+                } else {
+                    $(node)[config.tabEvent](function() {
+                        pause && clearTimeout(pause);
+                        pause = setTimeout(function() {
+                            _this.stop();
+                            if (_this.count !== i) {
+                                _this._move(_this.count, i, function() {
+                                    this.start();
+                                });
+                                _this.count = i;
+                            }
+                        }, 200);
+                    })
+                }
             });
             // 为选项卡增加class
             if (!_this.tabs.eq(_this.count).hasClass(config.cls)) {
@@ -144,6 +170,7 @@
          */
 		start: function(){
 			var _this = this;
+            _this.stop();
 			_this.show = setTimeout(function() {
                 _this._run();
             }, _this.config.interval);
@@ -153,7 +180,7 @@
          * 卡盘停止转动
          */
 		stop: function(){
-			clearTimeout(this.show);
+			this.show && clearTimeout(this.show);
 		},
 
         /**
@@ -195,11 +222,12 @@
 				tabs = this.tabs;
             //一次轮回结束  
 			if (isEnd) {
-				if (!config.autoplay) {
-                    this.stop();
-				}
                 this.count = 0;
 				config.callback.call(config.panel);
+				if (!config.isLoop) {
+                    this.stop();
+                    return;
+				}
 			} else {
                 if (count < 0) {
                     this.count = 0;
@@ -209,7 +237,7 @@
                 }
             }
 			
-            this._move(this.count, count+1, function(){
+            this._move(count, count + 1, function(){
 				// 当为最后一个时
 				if (this.count < 1) {
                     var config = this.config;
@@ -242,8 +270,13 @@
 
 			// 存在tab及class的情况
 			if (this.tabs) {
-                this.tabs.eq(prevCount).removeClass(config.cls)
-                .eq(count).addClass(config.cls);
+                // 为了自动轮播的最后一步
+                if (count > this.amount) {
+                    prevCount = this.amount;
+                    count = 0;
+                }
+                this.tabs.eq(prevCount).removeClass(config.cls);
+                this.tabs.eq(count).addClass(config.cls);
 			}
         }
 	};
