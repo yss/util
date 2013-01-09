@@ -2,9 +2,12 @@
  * 卡盘代码
  * @Author yansong
  * @Date 2012/12/28
+ * @Support jQuery || Zepto
  * @Update 
  */
-(function($) {
+(function(win) {
+    // 判断用户使用的框架
+    var $ = win.Zepto || win.jQuery;
 	/**
 	 * 滚动卡盘，需要特定的html,css支持
 	 * @param {Object} o
@@ -15,15 +18,14 @@
      *      @attr {Boolean} isTouch 是否是触摸 default: false
 	 *		@attr {String} cls 用于切换的class default: selected
 	 *		@attr {String} direction 轮播方向（上或左）top|left default: top
-	 *		@attr {String} easing 动画函数 default: ease
+	 *		@attr {String} easing 动画函数 default: 按照js框架的默认值
 	 *		@attr {Number} duration 动画所用时间 default: 0.5(s)
 	 *		@attr {Number} rollSize 每次轮播滚动子元素个数 default: 1
 	 *		@attr {Number} interval 轮播间隔时间 default: 3
 	 *		@attr {Boolean} isLoop 是否自动循环 default: true
 	 *		@attr {Number} startPos 开始位置 default: 0
 	 *		@attr {Function} callback 回调函数
-	 * @param callback
-	 * @return 
+	 * @return {Object}
 	 */
 	function Slide(o){
         var defaultConfig = {
@@ -31,7 +33,7 @@
             tabEvent: 'mouseover',
             cls: 'selected',
             direction: 'top',
-            easing: 'ease',
+            // easing: 'ease',
             duration: 0.5,
             rollSize: 1,
             interval: 3,
@@ -281,4 +283,4 @@
         }
 	};
 	$.slide = Slide;
-})(Zepto);
+})(window);

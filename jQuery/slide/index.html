@@ -53,10 +53,8 @@
 isTouch = false;
 if (~navigator.userAgent.indexOf('Mobile')) {
     isTouch = true;
-    document.getElementById('p').innerHTML = 'true';
-} else {
-    document.getElementById('p').innerHTML = navigator.userAgent;
 }
+document.getElementById('p').innerHTML = navigator.userAgent;
 var slide1 = $.slide({panel:'#slide ul', tab: '#slide ol', direction: 'left', isTouch: isTouch})
 var slide2 = $.slide({panel:'#slide2 ul', direction: 'top', isTouch: isTouch})
 </script>
