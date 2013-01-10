@@ -2,9 +2,9 @@
  * 卡盘代码
  * @Author yansong
  * @Date 2012/12/28
- * @Support jQuery || Zepto
- * @Update 
+ * @Support jQuery||Zepto
  */
+
 (function(win) {
     // 判断用户使用的框架
     var $ = win.Zepto || win.jQuery;
@@ -17,7 +17,7 @@
 	 *		@attr {String} tabEvent 鼠标切换事件 default: mouseover | touchStart 当为'none'时不设置事件
      *      @attr {Boolean} isTouch 是否是触摸 default: false
 	 *		@attr {String} cls 用于切换的class default: selected
-	 *		@attr {String} direction 轮播方向（上或左）top|left default: top
+	 *		@attr {String} direction 轮播方向（上或左）top|left default: left
 	 *		@attr {String} easing 动画函数 default: 按照js框架的默认值
 	 *		@attr {Number} duration 动画所用时间 default: 0.5(s)
 	 *		@attr {Number} rollSize 每次轮播滚动子元素个数 default: 1
@@ -32,7 +32,7 @@
             addPanelEvent: true,
             tabEvent: 'mouseover',
             cls: 'selected',
-            direction: 'top',
+            direction: 'left',
             // easing: 'ease',
             duration: 0.5,
             rollSize: 1,
@@ -64,17 +64,22 @@
 		init: function(){
             var config = this.config,
                 panels = config.panel.children(),
+                panelSize = panels.length,
                 tabs = config.tab.children();
 			
-            if (config.direction === 'top') {
-                this.rollLength = config.panel.parent().height();
-            } else {
+            if (config.direction === 'left') {
                 this.rollLength = config.panel.parent().width();
+            } else {
+                this.rollLength = config.panel.parent().height();
             }
 
+            if (panelSize <= config.rollSize) {
+                return;
+            }
             this.css = {};
             // 一次轮播的总数
-			this.amount = Math.ceil(panels.length / config.rollSize) - 1;
+			this.amount = Math.ceil(panelSize / config.rollSize) - 1;
+
             // 存放当前卡盘运行的位置
             this.count = config.startPos;
             // 初始值
@@ -102,8 +107,8 @@
                 initValue = this.startValue - config.startPos * _this.rollLength + 'px',
                 i = 0;
             // 复制滚动项
-            while (i < config.rollSize) {
-                panel.append(panels.eq(i++).clone());
+            for (; i < config.rollSize; i++) {
+                panel.append(panels.eq(i).clone());
             }
 
             // 设置初始化面板的位置
@@ -112,10 +117,10 @@
             // 设置面板的事件
             if (config.addPanelEvent) {
                 if (config.isTouch) {
-                    var isTop = direction === 'top';
-                    panel[isTop? 'swipeUp' : 'swipeLeft'](function() {
+                    var isLeft = direction === 'left';
+                    panel[isLeft ? 'swipeLeft' : 'swipeUp'](function() {
                         _this.next();
-                    })[isTop? 'swipeDown': 'swipeRight'](function() {
+                    })[isLeft ? 'swipeRight': 'swipeDown'](function() {
                         _this.prev();
                     });
                 } else {
@@ -148,7 +153,9 @@
                     });
                 } else {
                     $(node)[config.tabEvent](function() {
-                        pause && win.clearTimeout(pause);
+                        if (pause) {
+                            win.clearTimeout(pause);
+                        }
                         pause = win.setTimeout(function() {
                             _this.stop();
                             if (_this.count !== i) {
@@ -158,7 +165,7 @@
                                 _this.count = i;
                             }
                         }, 200);
-                    })
+                    });
                 }
             });
             // 为选项卡增加class
@@ -182,7 +189,9 @@
          * 卡盘停止转动
          */
 		stop: function(){
-			this.show && win.clearTimeout(this.show);
+			if (this.show) {
+                win.clearTimeout(this.show);
+            }
 		},
 
         /**
@@ -194,7 +203,8 @@
                 return;
             }
             this.stop();
-            this._move(--this.count + 1, this.count, function() {
+            this.count -= 1;
+            this._move(this.count + 1, this.count, function() {
                 this.start();
             });
         },
@@ -208,7 +218,8 @@
                 return;
             }
             this.stop();
-            this._move(++this.count - 1, this.count, function() {
+            this.count += 1;
+            this._move(this.count - 1, this.count, function() {
                 this.start();
             });
         },
@@ -222,7 +233,8 @@
 				isEnd = this.amount <= count,
 				cls = config.cls,
 				tabs = this.tabs;
-            //一次轮回结束  
+
+            // 一次轮回结束
 			if (isEnd) {
                 this.count = 0;
 				config.callback.call(config.panel);
