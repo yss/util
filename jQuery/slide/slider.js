@@ -62,7 +62,7 @@
          * 初始化
          */
 		init: function(){
-            var config = this.config;
+            var config = this.config,
                 panels = config.panel.children(),
                 tabs = config.tab.children();
 			
@@ -148,8 +148,8 @@
                     });
                 } else {
                     $(node)[config.tabEvent](function() {
-                        pause && clearTimeout(pause);
-                        pause = setTimeout(function() {
+                        pause && win.clearTimeout(pause);
+                        pause = win.setTimeout(function() {
                             _this.stop();
                             if (_this.count !== i) {
                                 _this._move(_this.count, i, function() {
@@ -173,7 +173,7 @@
 		start: function(){
 			var _this = this;
             _this.stop();
-			_this.show = setTimeout(function() {
+			_this.show = win.setTimeout(function() {
                 _this._run();
             }, _this.config.interval);
 		},
@@ -182,7 +182,7 @@
          * 卡盘停止转动
          */
 		stop: function(){
-			this.show && clearTimeout(this.show);
+			this.show && win.clearTimeout(this.show);
 		},
 
         /**
