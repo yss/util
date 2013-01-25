@@ -104,9 +104,9 @@ $.extend(WritePoetry.prototype, {
     appendData: function(elems) {
         elems = $(elems);
         if (elems.length) {
-            this.initData(elems);
             elems.appendTo(this.elem);
             this.config.elems = this.config.elems.add(elems);
+            this.initData(elems);
         }
     },
     /**
